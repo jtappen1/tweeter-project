@@ -1,12 +1,13 @@
 import "./Login.css";
 import "bootstrap/dist/css/bootstrap.css";
-import { useContext } from "react";
-import { UserInfoContext } from "../../userInfo/UserInfoProvider";
 import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthenticationFormLayout from "../AuthenticationFormLayout";
-import { AuthToken, FakeData, User } from "tweeter-shared";
+import { AuthToken, User } from "tweeter-shared";
 import useToastListener from "../../toaster/ToastListenerHook";
+import AutheticationField from "../authenticationFields/AuthenticationFields";
+import useUserInfo from "../../userInfo/UserInfoHook";
+import { LoginPresenter, LoginView } from "../../../presenter/LoginPresenter";
 
 interface Props {
   originalUrl?: string;
@@ -18,72 +19,31 @@ const Login = (props: Props) => {
   const [rememberMe, setRememberMe] = useState(false);
 
   const navigate = useNavigate();
-  const { updateUserInfo } = useContext(UserInfoContext);
+  const { updateUserInfo } = useUserInfo();
   const { displayErrorMessage } = useToastListener();
 
   const rememberMeRef = useRef(rememberMe);
   rememberMeRef.current = rememberMe;
 
+  const listener:LoginView = {
+    displayErrorMessage:displayErrorMessage,
+    navigate:navigate,
+    updateUserInfo:(user: User, authToken: AuthToken) => updateUserInfo(user,user,authToken,rememberMeRef.current),
+  }
+
   const checkSubmitButtonStatus = (): boolean => {
     return !alias || !password;
   };
+  const [presenter] = useState(new LoginPresenter(listener))
 
-  const doLogin = async () => {
-    try {
-      let [user, authToken] = await login(alias, password);
-
-      updateUserInfo(user, user, authToken, rememberMeRef.current);
-
-      if (!!props.originalUrl) {
-        navigate(props.originalUrl);
-      } else {
-        navigate("/");
-      }
-    } catch (error) {
-      displayErrorMessage(
-        `Failed to log user in because of exception: ${error}`
-      );
-    }
-  };
-
-  const login = async (
-    alias: string,
-    password: string
-  ): Promise<[User, AuthToken]> => {
-    // TODO: Replace with the result of calling the server
-    let user = FakeData.instance.firstUser;
-
-    if (user === null) {
-      throw new Error("Invalid alias or password");
-    }
-
-    return [user, FakeData.instance.authToken];
-  };
+  const doLogin = () => {
+    presenter.doLogin(alias, password, props.originalUrl!)
+  }
 
   const inputFieldGenerator = () => {
     return (
       <>
-        <div className="form-floating">
-          <input
-            type="text"
-            className="form-control"
-            size={50}
-            id="aliasInput"
-            placeholder="name@example.com"
-            onChange={(event) => setAlias(event.target.value)}
-          />
-          <label htmlFor="aliasInput">Alias</label>
-        </div>
-        <div className="form-floating mb-3">
-          <input
-            type="password"
-            className="form-control bottom"
-            id="passwordInput"
-            placeholder="Password"
-            onChange={(event) => setPassword(event.target.value)}
-          />
-          <label htmlFor="passwordInput">Password</label>
-        </div>
+        <AutheticationField setAlias={(event) => setAlias(event.target.value)} setPassword= {(event) => setPassword(event.target.value)}/>
       </>
     );
   };

@@ -1,13 +1,16 @@
 import "./Register.css";
 import "bootstrap/dist/css/bootstrap.css";
 import { useContext } from "react";
-import { UserInfoContext } from "../../userInfo/UserInfoProvider";
+
 import { ChangeEvent, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthenticationFormLayout from "../AuthenticationFormLayout";
-import { AuthToken, FakeData, User } from "tweeter-shared";
+import { AuthToken, User } from "tweeter-shared";
 import { Buffer } from "buffer";
 import useToastListener from "../../toaster/ToastListenerHook";
+import AutheticationField from "../authenticationFields/AuthenticationFields";
+import useUserInfo from "../../userInfo/UserInfoHook";
+import { RegisterPresenter, RegisterView } from "../../../presenter/RegisterPresenter";
 
 const Register = () => {
   const [firstName, setFirstName] = useState("");
@@ -22,7 +25,7 @@ const Register = () => {
   rememberMeRef.current = rememberMe;
 
   const navigate = useNavigate();
-  const { updateUserInfo } = useContext(UserInfoContext);
+  const { updateUserInfo } = useUserInfo();
   const { displayErrorMessage } = useToastListener();
 
   const checkSubmitButtonStatus = (): boolean => {
@@ -34,71 +37,26 @@ const Register = () => {
     handleImageFile(file);
   };
 
+  const listener:RegisterView = {
+    displayErrorMessage:displayErrorMessage,
+    navigate:navigate,
+    updateUserInfo:(user: User, authToken: AuthToken) => updateUserInfo(user,user,authToken,rememberMeRef.current),
+    setImageBytes:setImageBytes,
+    setImageUrl:setImageUrl
+
+  }
+  const [presenter] = useState(new RegisterPresenter(listener));
+
   const handleImageFile = (file: File | undefined) => {
-    if (file) {
-      setImageUrl(URL.createObjectURL(file));
-
-      const reader = new FileReader();
-      reader.onload = (event: ProgressEvent<FileReader>) => {
-        const imageStringBase64 = event.target?.result as string;
-
-        // Remove unnecessary file metadata from the start of the string.
-        const imageStringBase64BufferContents =
-          imageStringBase64.split("base64,")[1];
-
-        const bytes: Uint8Array = Buffer.from(
-          imageStringBase64BufferContents,
-          "base64"
-        );
-
-        setImageBytes(bytes);
-      };
-      reader.readAsDataURL(file);
-    } else {
-      setImageUrl("");
-      setImageBytes(new Uint8Array());
-    }
+    presenter.handleImageFile(file);
+    
   };
 
   const doRegister = async () => {
-    try {
-      let [user, authToken] = await register(
-        firstName,
-        lastName,
-        alias,
-        password,
-        imageBytes
-      );
-
-      updateUserInfo(user, user, authToken, rememberMeRef.current);
-      navigate("/");
-    } catch (error) {
-      displayErrorMessage(
-        `Failed to register user because of exception: ${error}`
-      );
-    }
+      presenter.doRegister(firstName,lastName,alias,password,imageBytes);
+    
   };
 
-  const register = async (
-    firstName: string,
-    lastName: string,
-    alias: string,
-    password: string,
-    userImageBytes: Uint8Array
-  ): Promise<[User, AuthToken]> => {
-    // Not neded now, but will be needed when you make the request to the server in milestone 3
-    let imageStringBase64: string =
-      Buffer.from(userImageBytes).toString("base64");
-
-    // TODO: Replace with the result of calling the server
-    let user = FakeData.instance.firstUser;
-
-    if (user === null) {
-      throw new Error("Invalid registration");
-    }
-
-    return [user, FakeData.instance.authToken];
-  };
 
   const inputFieldGenerator = () => {
     return (
@@ -125,27 +83,9 @@ const Register = () => {
           />
           <label htmlFor="lastNameInput">Last Name</label>
         </div>
-        <div className="form-floating">
-          <input
-            type="text"
-            className="form-control"
-            size={50}
-            id="aliasInput"
-            placeholder="name@example.com"
-            onChange={(event) => setAlias(event.target.value)}
-          />
-          <label htmlFor="aliasInput">Alias</label>
-        </div>
-        <div className="form-floating">
-          <input
-            type="password"
-            className="form-control"
-            id="passwordInput"
-            placeholder="Password"
-            onChange={(event) => setPassword(event.target.value)}
-          />
-          <label htmlFor="passwordInput">Password</label>
-        </div>
+        
+        <AutheticationField setAlias={(event) => setAlias(event.target.value)} setPassword= {(event) => setPassword(event.target.value)}/>
+
         <div className="form-floating mb-3">
           <input
             type="file"
