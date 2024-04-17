@@ -1,4 +1,5 @@
-import { AuthToken, User, Status, FakeData } from "tweeter-shared";
+import { AuthToken, User, Status, LoadMoreStatusItemsRequest, PostStatusRequest } from "tweeter-shared";
+import { ServerFacade } from "./net/ServerFacade";
 
 export class StatusService{
     public async loadMoreStoryItems (
@@ -7,8 +8,12 @@ export class StatusService{
         pageSize: number,
         lastItem: Status | null
       ): Promise<[Status[], boolean]>  {
-        // TODO: Replace with the result of calling server
-        return FakeData.instance.getPageOfStatuses(lastItem, pageSize);
+
+        const request = new LoadMoreStatusItemsRequest(authToken, user, pageSize, lastItem);
+        const response = await (new ServerFacade().loadMoreStoryItems(request));
+
+        console.log("Story Items: " + response._message + ", "+ response._success);
+        return response._items;
       };
     
       public async loadMoreFeedItems(
@@ -17,14 +22,21 @@ export class StatusService{
         pageSize: number,
         lastItem: Status | null
       ): Promise<[Status[], boolean]> {
-        // TODO: Replace with the result of calling server
-        return FakeData.instance.getPageOfStatuses(lastItem, pageSize);
+        
+        const request = new LoadMoreStatusItemsRequest(authToken, user, pageSize, lastItem);
+        const response = await (new ServerFacade().loadMoreFeedItems(request));
+
+        console.log("Feed Items: " + response._message + ", "+ response._success);
+        return response._items;
       };
       public async postStatus(
         authToken: AuthToken,
         newStatus: Status
       ): Promise<void>{
+        const request = new PostStatusRequest(authToken, newStatus)
+        const response = await (new ServerFacade().postStatus(request));
+        console.log("Post Response: "+ response._message + ", "+ response._success);
         // Pause so we can see the logging out message. Remove when connected to the server
-        await new Promise((f) => setTimeout(f, 2000));
+        // await new Promise((f) => setTimeout(f, 2000));
       }
 }

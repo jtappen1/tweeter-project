@@ -16,6 +16,7 @@ const AutheticationField = (props: Props) => {
             className="form-control"
             size={50}
             id="aliasInput"
+            aria-label="alias"
             placeholder="name@example.com"
             onChange={props.setAlias}
           />
@@ -26,6 +27,7 @@ const AutheticationField = (props: Props) => {
             type="password"
             className="form-control bottom"
             id="passwordInput"
+            aria-label = "password"
             placeholder="Password"
             onChange={props.setPassword}
           />

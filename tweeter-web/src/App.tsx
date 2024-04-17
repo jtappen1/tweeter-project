@@ -11,8 +11,6 @@ import Login from "./components/authentication/login/Login";
 import Register from "./components/authentication/register/Register";
 import MainLayout from "./components/mainLayout/MainLayout";
 import Toaster from "./components/toaster/Toaster";
-import UserItemScroller from "./components/mainLayout/UserItemScroller";
-import StatusItemScroller from "./components/mainLayout/StatusItemScroller";
 import useUserInfo from "./components/userInfo/UserInfoHook";
 import { FollowingPresenter } from "./presenter/FollowingPresenter";
 import { UserItemView } from "./presenter/UserItemPresenter";
@@ -20,6 +18,11 @@ import { FollowerPresenter } from "./presenter/FollowersPresenter";
 import { StatusItemView } from "./presenter/StatusItemPresenter";
 import { FeedPresenter } from "./presenter/FeedPresenter";
 import { StoryPresenter } from "./presenter/StoryPresenter";
+import ItemScroller from "./components/mainLayout/ItemScroller";
+import { PageItemView, PagedItemPresenter } from "./presenter/PagedItemPresenter";
+import UserItem from "./components/userItem/UserItem";
+import { Status, User } from "tweeter-shared";
+import StatusItem from "./components/statusItem/StatusItem";
 
 const App = () => {
   const { currentUser, authToken } = useUserInfo();
@@ -42,48 +45,36 @@ const App = () => {
   );
 };
 
+
 const AuthenticatedRoutes = () => {
   
-  // const loadMoreStoryItems = async (
-  //   authToken: AuthToken,
-  //   user: User,
-  //   pageSize: number,
-  //   lastItem: Status | null
-  // ): Promise<[Status[], boolean]> => {
-  //   // TODO: Replace with the result of calling server
-  //   return FakeData.instance.getPageOfStatuses(lastItem, pageSize);
-  // };
-
-  // const loadMoreFeedItems = async (
-  //   authToken: AuthToken,
-  //   user: User,
-  //   pageSize: number,
-  //   lastItem: Status | null
-  // ): Promise<[Status[], boolean]> => {
-  //   // TODO: Replace with the result of calling server
-  //   return FakeData.instance.getPageOfStatuses(lastItem, pageSize);
-  // };
+  const userItem = (user:User) => <UserItem value={user}/>
+  const statusItem = (status:Status) => <StatusItem value={status}/>
 
   return (
     <Routes>
       <Route element={<MainLayout />}>
         <Route index element={<Navigate to="/feed" />} />
-        <Route path="feed" element={<StatusItemScroller presenterGenerator={(view:StatusItemView) => new FeedPresenter(view)} />} />
-        <Route path="story" element={<StatusItemScroller presenterGenerator={(view:StatusItemView) => new StoryPresenter(view)} />} />
+        <Route path="feed" element={
+          
+        
+        <ItemScroller key = {'feed'} presenterGenerator={(view:PageItemView<Status>) => new FeedPresenter(view)} itemComponentGenerator={statusItem}/>
+      }/>
+        <Route path="story" element={
+       
+        <ItemScroller key = {'story'} presenterGenerator={(view:PageItemView<Status>) => new StoryPresenter(view)} itemComponentGenerator={statusItem}/>
+        } />
         <Route
           path="following"
           element={
-            <UserItemScroller
-            presenterGenerator = {(view:UserItemView) => new FollowingPresenter(view)}
-            />
+            <ItemScroller key = {'following'} presenterGenerator={(view:PageItemView<User>) => new FollowingPresenter(view)} itemComponentGenerator={userItem}/>
           }
         />
         <Route
           path="followers"
           element={
-            <UserItemScroller
-            presenterGenerator = {(view:UserItemView) => new FollowerPresenter(view)}
-            />
+            <ItemScroller key = {'follower'} presenterGenerator={(view:PageItemView<User>) => new FollowerPresenter(view)} itemComponentGenerator={userItem}/>
+            
           }
         />
         <Route path="logout" element={<Navigate to="/login" />} />

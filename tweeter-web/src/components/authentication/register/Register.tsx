@@ -10,7 +10,7 @@ import { Buffer } from "buffer";
 import useToastListener from "../../toaster/ToastListenerHook";
 import AutheticationField from "../authenticationFields/AuthenticationFields";
 import useUserInfo from "../../userInfo/UserInfoHook";
-import { RegisterPresenter, RegisterView } from "../../../presenter/RegisterPresenter";
+import { RegisterPresenter, RegisterView} from "../../../presenter/RegisterPresenter";
 
 const Register = () => {
   const [firstName, setFirstName] = useState("");

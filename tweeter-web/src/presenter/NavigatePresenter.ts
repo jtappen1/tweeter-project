@@ -1,24 +1,27 @@
 import { AuthToken, User } from "tweeter-shared";
 import { NavigateService } from "../model/service/NavigateService";
+import { Presenter, View } from "./Presenter";
+import { UserService } from "../model/service/UserService";
 
- export interface NavigateView{
-        displayErrorMessage: (message:string) =>void;
+ export interface NavigateView extends View{
         setDisplayedUser: (currentUser: User) => void;
-      }
+}
 
-export class NavigatePresenter{
+export class NavigatePresenter extends Presenter{
 
-    private service:NavigateService;
-    private view: NavigateView;
+    private service:UserService;
 
     public constructor(view: NavigateView ){
-        this.service = new NavigateService();
-        this.view = view;
+        super(view);
+        this.service = new UserService();
+    }
+    protected get view(): NavigateView{
+      return super.view  as NavigateView;
     }
 
       public async navigate(authToken:AuthToken | null, currentUser: User|null, aliasString: string): Promise<void>{
-        try {
-            let alias = this.extractAlias(aliasString);
+        this.doFailureReportingOperation(async () => {
+          let alias = this.extractAlias(aliasString);
     
             let user = await this.service.getUser(authToken!, alias);
             console.log("Inside navigate");
@@ -29,9 +32,7 @@ export class NavigatePresenter{
                 this.view.setDisplayedUser(user);
                 }
             }
-            } catch (error) {
-            this.view.displayErrorMessage(`Failed to get user because of exception: ${error}`);
-            }
+        }, "get user")
       }
       public extractAlias = (value: string): string => {
         let index = value.indexOf("@");

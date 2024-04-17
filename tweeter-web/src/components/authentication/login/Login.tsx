@@ -7,10 +7,12 @@ import { AuthToken, User } from "tweeter-shared";
 import useToastListener from "../../toaster/ToastListenerHook";
 import AutheticationField from "../authenticationFields/AuthenticationFields";
 import useUserInfo from "../../userInfo/UserInfoHook";
-import { LoginPresenter, LoginView } from "../../../presenter/LoginPresenter";
+import { LoginPresenter } from "../../../presenter/LoginPresenter";
+import { AuthenticationView } from "../../../presenter/AuthenticationPresenter";
 
 interface Props {
   originalUrl?: string;
+  presenter?: LoginPresenter;
 }
 
 const Login = (props: Props) => {
@@ -25,16 +27,16 @@ const Login = (props: Props) => {
   const rememberMeRef = useRef(rememberMe);
   rememberMeRef.current = rememberMe;
 
-  const listener:LoginView = {
-    displayErrorMessage:displayErrorMessage,
-    navigate:navigate,
-    updateUserInfo:(user: User, authToken: AuthToken) => updateUserInfo(user,user,authToken,rememberMeRef.current),
+  const listener:AuthenticationView = {
+    displayErrorMessage: displayErrorMessage,
+    navigate: navigate,
+    updateUserInfo: (user: User, authToken: AuthToken) => updateUserInfo(user, user, authToken, rememberMeRef.current),
   }
 
   const checkSubmitButtonStatus = (): boolean => {
     return !alias || !password;
   };
-  const [presenter] = useState(new LoginPresenter(listener))
+  const [presenter] = useState(props.presenter ?? new LoginPresenter(listener))
 
   const doLogin = () => {
     presenter.doLogin(alias, password, props.originalUrl!)

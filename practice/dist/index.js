@@ -1,0 +1,38 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.LoadMoreItemsResponse = exports.LoadMoreIemsRequest = exports.GetIsFollowerStatusResponse = exports.GetIsFollowerStatusRequest = exports.TweeterResponse = exports.GetFollowersCountResponse = exports.GetFollowersCountRequest = exports.AuthenticateResponse = exports.RegisterRequest = exports.LoginRequest = exports.FakeData = exports.AuthToken = exports.User = exports.Status = exports.Type = exports.PostSegment = exports.Follow = void 0;
+var Follow_1 = require("./model/domain/Follow");
+Object.defineProperty(exports, "Follow", { enumerable: true, get: function () { return Follow_1.Follow; } });
+var PostSegment_1 = require("./model/domain/PostSegment");
+Object.defineProperty(exports, "PostSegment", { enumerable: true, get: function () { return PostSegment_1.PostSegment; } });
+Object.defineProperty(exports, "Type", { enumerable: true, get: function () { return PostSegment_1.Type; } });
+var Status_1 = require("./model/domain/Status");
+Object.defineProperty(exports, "Status", { enumerable: true, get: function () { return Status_1.Status; } });
+var User_1 = require("./model/domain/User");
+Object.defineProperty(exports, "User", { enumerable: true, get: function () { return User_1.User; } });
+var AuthToken_1 = require("./model/domain/AuthToken");
+Object.defineProperty(exports, "AuthToken", { enumerable: true, get: function () { return AuthToken_1.AuthToken; } });
+// All classes that should be avaialble to other modules need to exported here. export * does not work when 
+// uploading to lambda. Instead we have to list each export.
+var FakeData_1 = require("./util/FakeData");
+Object.defineProperty(exports, "FakeData", { enumerable: true, get: function () { return FakeData_1.FakeData; } });
+var LoginRequest_1 = require("./model/network_layer/request/LoginRequest");
+Object.defineProperty(exports, "LoginRequest", { enumerable: true, get: function () { return LoginRequest_1.LoginRequest; } });
+var RegisterRequest_1 = require("./model/network_layer/request/RegisterRequest");
+Object.defineProperty(exports, "RegisterRequest", { enumerable: true, get: function () { return RegisterRequest_1.RegisterRequest; } });
+var AuthenticateResponse_1 = require("./model/network_layer/response/AuthenticateResponse");
+Object.defineProperty(exports, "AuthenticateResponse", { enumerable: true, get: function () { return AuthenticateResponse_1.AuthenticateResponse; } });
+var GetFollowersCountRequest_1 = require("./model/network_layer/request/GetFollowersCountRequest");
+Object.defineProperty(exports, "GetFollowersCountRequest", { enumerable: true, get: function () { return GetFollowersCountRequest_1.GetFollowersCountRequest; } });
+var GetFollowersCountResponse_1 = require("./model/network_layer/response/GetFollowersCountResponse");
+Object.defineProperty(exports, "GetFollowersCountResponse", { enumerable: true, get: function () { return GetFollowersCountResponse_1.GetFollowersCountResponse; } });
+var TweeterResponse_1 = require("./model/network_layer/response/TweeterResponse");
+Object.defineProperty(exports, "TweeterResponse", { enumerable: true, get: function () { return TweeterResponse_1.TweeterResponse; } });
+var GetIsFollowerStatusRequest_1 = require("./model/network_layer/request/GetIsFollowerStatusRequest");
+Object.defineProperty(exports, "GetIsFollowerStatusRequest", { enumerable: true, get: function () { return GetIsFollowerStatusRequest_1.GetIsFollowerStatusRequest; } });
+var GetIsFollowerStatusResponse_1 = require("./model/network_layer/response/GetIsFollowerStatusResponse");
+Object.defineProperty(exports, "GetIsFollowerStatusResponse", { enumerable: true, get: function () { return GetIsFollowerStatusResponse_1.GetIsFollowerStatusResponse; } });
+var LoadMoreItemsRequest_1 = require("./model/network_layer/request/LoadMoreItemsRequest");
+Object.defineProperty(exports, "LoadMoreIemsRequest", { enumerable: true, get: function () { return LoadMoreItemsRequest_1.LoadMoreIemsRequest; } });
+var LoadMoreItemsResponse_1 = require("./model/network_layer/response/LoadMoreItemsResponse");
+Object.defineProperty(exports, "LoadMoreItemsResponse", { enumerable: true, get: function () { return LoadMoreItemsResponse_1.LoadMoreItemsResponse; } });

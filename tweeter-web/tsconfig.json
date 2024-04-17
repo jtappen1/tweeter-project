@@ -23,5 +23,5 @@
   },
   "include": [
     "src"
-  ]
+, "test/__mocks__/presenter/AppNavBarPresenter.test.ts", "../tweeter-shared/src/model/network_layer"  ]
 }

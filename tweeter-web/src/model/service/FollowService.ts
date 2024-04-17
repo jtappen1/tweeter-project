@@ -1,4 +1,5 @@
-import { AuthToken, User, FakeData } from "tweeter-shared";
+import { AuthToken, User, FakeData, LoadMoreIemsRequest } from "tweeter-shared";
+import { ServerFacade } from "./net/ServerFacade";
 
 export class FollowService{
     public async loadMoreFollowers(
@@ -7,9 +8,13 @@ export class FollowService{
         pageSize: number,
         lastItem: User | null
       ): Promise<[User[], boolean]> {
-        // TODO: Replace with the result of calling server
-        return FakeData.instance.getPageOfUsers(lastItem, pageSize, user);
+
+        const loadMoreItemsRequest = new LoadMoreIemsRequest(authToken,user,pageSize, lastItem)
+        const loadMoreItemsResponse = await (new ServerFacade().loadMoreFollowers(loadMoreItemsRequest));
+        console.log("THIS IS A LOAD MORE FOLLOWERS SERVICE CALL");
+        return loadMoreItemsResponse._items;
       };
+      //FakeData.instance.getPageOfUsers(lastItem, pageSize, user
     
       public async loadMoreFollowees(
         authToken: AuthToken,
@@ -17,8 +22,12 @@ export class FollowService{
         pageSize: number,
         lastItem: User | null
       ): Promise<[User[], boolean]> {
-        // TODO: Replace with the result of calling server
-        return FakeData.instance.getPageOfUsers(lastItem, pageSize, user);
+        
+        const loadMoreItemsRequest = new LoadMoreIemsRequest(authToken,user,pageSize, lastItem)
+        const loadMoreItemsResponse = await (new ServerFacade().loadMoreFollowees(loadMoreItemsRequest));
+        
+        return loadMoreItemsResponse._items;
       };
+      
     
 }

@@ -8,6 +8,11 @@
   "author": "JWilkerson",
   "license": "ISC",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.540.0",
+    "@aws-sdk/lib-dynamodb": "^3.540.0",
+    "@types/crypto-js": "^4.2.2",
+    "crypto-js": "^4.2.0",
+    "ts-node": "^10.9.2",
     "vite-plugin-dts": "^3.3.1"
   }
 }

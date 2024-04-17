@@ -1,25 +1,34 @@
 import { User, AuthToken } from "tweeter-shared";
 import { UserService } from "../model/service/UserService";
 import { Buffer } from "buffer";
+import { ErrorView } from "./Presenter";
+import { AuthenticationPresenter, AuthenticationView } from "./AuthenticationPresenter";
 
-export interface RegisterView{
-    displayErrorMessage: (message:string) =>void;
-    navigate: (originalUrl:string) => void;
-    updateUserInfo: (user: User, authToken: AuthToken) => void;
+export interface RegisterView extends AuthenticationView{
+    
     setImageBytes: (Uint8Array: Uint8Array) =>void;
     setImageUrl: (url: string) => void ;
 
     
 }
 
-export class RegisterPresenter{
+export class RegisterPresenter extends AuthenticationPresenter{
+  
+    protected getItemDescription(): String {
+      return "register user";
+    }
     private service: UserService;
-    private view : RegisterView;
+    
     
     public constructor(view: RegisterView){
-        this.view = view;
+      super(view)
+        
         this.service = new UserService();
     }
+    protected get view():RegisterView{
+      return super.view as RegisterView;
+  }
+
 
     public async handleImageFile(file: File | undefined){
         if (file) {
@@ -47,21 +56,15 @@ export class RegisterPresenter{
           }
     }
     public async doRegister(firstName: string, lastName: string, alias:string, password:string, imageBytes:Uint8Array){
-        try {
-            let [user, authToken] = await this.service.register(
+      this.authenicate(()=>this.service.register(
               firstName,
               lastName,
               alias,
               password,
               imageBytes
-            );
-            this.view.updateUserInfo(user, authToken);
-            this.view.navigate("/");
-          } catch (error) {
-            this.view.displayErrorMessage(
-              `Failed to register user because of exception: ${error}`
-            );
-          }
+            ), () => {
+                this.view.navigate("/")});
+        
     }
 
 

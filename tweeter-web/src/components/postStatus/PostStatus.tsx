@@ -1,13 +1,16 @@
 import "./PostStatus.css";
 import { useState } from "react";
 import { useContext } from "react";
-
-import { AuthToken, Status } from "tweeter-shared";
 import useToastListener from "../toaster/ToastListenerHook";
 import useUserInfo from "../userInfo/UserInfoHook";
 import { PostStatusPresenter, PostStatusView } from "../../presenter/PostStatusPresenter";
 
-const PostStatus = () => {
+
+interface Props{
+  presenter?: PostStatusPresenter;
+}
+
+const PostStatus = (props: Props) => {
   const { displayErrorMessage, displayInfoMessage, clearLastInfoMessage } =
     useToastListener();
 
@@ -20,7 +23,7 @@ const PostStatus = () => {
     clearLastInfoMessage:clearLastInfoMessage,
     setPost:setPost
   }
-  const [presenter] = useState(new PostStatusPresenter(listener));
+  const [presenter] = useState(props.presenter ?? new PostStatusPresenter(listener));
 
   const submitPost = async (event: React.MouseEvent) => {
     event.preventDefault();
@@ -42,6 +45,7 @@ const PostStatus = () => {
         <textarea
           className="form-control"
           id="postStatusTextArea"
+          aria-label="postTextField"
           rows={10}
           placeholder="What's on your mind?"
           value={post}
@@ -55,6 +59,7 @@ const PostStatus = () => {
           id="postStatusButton"
           className="btn btn-md btn-primary me-1"
           type="button"
+          aria-label="postbtn"
           disabled={checkButtonStatus()}
           onClick={(event) => submitPost(event)}
         >
@@ -64,6 +69,7 @@ const PostStatus = () => {
           id="clearStatusButton"
           className="btn btn-md btn-secondary"
           type="button"
+          aria-label="clearbtn"
           disabled={checkButtonStatus()}
           onClick={(event) => clearPost(event)}
         >
